@@ -1,576 +1,318 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="SceneForge" />
-  <title>SceneForge</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@400;600&display=swap');
-    html, body, #root { margin: 0; padding: 0; width: 100%; height: 100%; background: #0F0E0C; }
-    * { box-sizing: border-box; }
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,196,87,0.18); border-radius: 2px; }
-    button { outline: none; -webkit-tap-highlight-color: transparent; }
-    .sf-layout { display: grid; grid-template-columns: 248px 1fr; height: calc(100vh - 56px); overflow: hidden; }
-    .sf-sidebar { border-right: 1px solid rgba(255,255,255,0.06); overflow-y: auto; padding: 16px 13px; height: 100%; }
-    .sf-main { overflow-y: auto; padding: 20px 24px; height: 100%; }
-    .sf-badge { display: block; }
-    .g2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 6px; }
-    .g-colors { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 6px; }
-    .g-atm { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 18px; }
-    @media (max-width: 720px) {
-      .sf-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; height: calc(100vh - 50px); }
-      .sf-sidebar { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); height: auto; max-height: 200px; padding: 10px 12px; }
-      .sf-main { padding: 14px; }
-      .sf-badge { display: none; }
-      .g2 { grid-template-columns: 1fr !important; }
-      .g-colors { grid-template-columns: 1fr !important; }
-      .g-atm { grid-template-columns: 1fr 1fr !important; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>SceneForge</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0F0E0C;color:#E8E0D0;font-family:system-ui,-apple-system,sans-serif;min-height:100vh}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;-webkit-tap-highlight-color:transparent}
+#hdr{position:sticky;top:0;z-index:10;background:#0F0E0C;border-bottom:1px solid rgba(255,255,255,0.08);padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+#hdr .logo{font-size:20px;font-weight:700;color:#FFC457}
+#hdr .sub{font-size:10px;color:rgba(232,224,208,0.35);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+#wrap{display:flex;height:calc(100vh - 57px);overflow:hidden}
+#sb{width:240px;flex-shrink:0;border-right:1px solid rgba(255,255,255,0.07);overflow-y:auto;padding:14px 12px}
+.slbl{font-size:9px;color:rgba(232,224,208,0.3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.ghdr{width:100%;text-align:left;background:none;padding:6px 4px;display:flex;justify-content:space-between;color:rgba(232,224,208,0.38);font-size:9px;text-transform:uppercase;letter-spacing:.08em}
+.sbtn{display:block;width:100%;text-align:left;background:none;padding:6px 10px;border-left:2px solid transparent;border-radius:0 4px 4px 0;color:rgba(232,224,208,0.55);font-size:13px}
+.sbtn.on{background:rgba(255,196,87,0.08);border-left-color:#FFC457;color:#FFC457;font-weight:600}
+#panel{flex:1;overflow-y:auto;padding:20px 22px}
+#panel-inner{max-width:800px}
+.placeholder{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:30px;text-align:center;color:rgba(232,224,208,0.2);font-style:italic;font-size:13px;margin-bottom:22px}
+.desc-block{background:rgba(255,196,87,0.03);border:1px solid rgba(255,196,87,0.12);border-radius:8px;padding:18px;margin-bottom:22px;display:none}
+.scene-hd{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.bar{width:3px;height:15px;background:#FFC457;border-radius:2px;flex-shrink:0}
+.snm{color:#FFC457;font-size:13px;font-weight:600}
+.stp{color:rgba(255,196,87,0.4);font-size:9px;text-transform:uppercase;letter-spacing:.08em}
+.sublbl{color:rgba(232,224,208,0.35);font-size:9px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px}
+.divider{height:1px;background:rgba(255,255,255,0.05);margin:20px 0}
+.sec{margin-bottom:22px}
+.sec-hd{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.step{width:20px;height:20px;border-radius:50%;background:rgba(255,196,87,0.14);border:1px solid rgba(255,196,87,0.4);color:#FFC457;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sec-t{color:#E8E0D0;font-size:13px;font-weight:600}
+.sec-s{color:rgba(232,224,208,0.35);font-size:11px;margin-left:28px;margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:6px;margin-bottom:16px}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:6px;margin-bottom:16px}
+.card{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:7px;padding:10px 12px;text-align:left;width:100%}
+.cl{color:#D0C8BC;font-size:12.5px}
+.cd{color:rgba(232,224,208,0.35);font-size:10.5px;margin-top:3px;line-height:1.4}
+.card.on{background:rgba(255,196,87,0.09);border-color:rgba(255,196,87,0.6)}
+.card.on .cl{color:#FFC457;font-weight:600}
+.ccrd{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:7px;padding:8px 10px;display:flex;align-items:center;gap:8px;width:100%;text-align:left}
+.dot{width:13px;height:13px;border-radius:50%;flex-shrink:0;border:1px solid rgba(255,255,255,0.12)}
+.ccrd.on{background:rgba(255,196,87,0.07);border-color:rgba(255,196,87,0.55)}
+.ccrd.on .cl{color:#FFC457;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:5px 11px;color:rgba(232,224,208,0.55);font-size:11.5px}
+.chip.on{background:rgba(255,196,87,0.1);border-color:rgba(255,196,87,0.55);color:#FFC457;font-weight:600}
+.ratios{display:flex;flex-wrap:wrap;gap:6px}
+.rbtn{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:7px;padding:8px 14px}
+.rl{color:#D0C8BC;font-size:13px;font-weight:600;font-family:monospace}
+.rd{color:rgba(232,224,208,0.35);font-size:10px;margin-top:1px}
+.rbtn.on{background:rgba(255,196,87,0.1);border-color:rgba(255,196,87,0.65)}
+.rbtn.on .rl{color:#FFC457}
+.atm{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px}
+.atm-lbl{font-size:9px;color:rgba(232,224,208,0.35);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.lbtn{display:block;width:100%;text-align:left;background:none;padding:4px 7px;border-left:2px solid transparent;color:rgba(232,224,208,0.5);font-size:12.5px}
+.lbtn.on{border-left-color:#FFC457;color:#FFC457;font-weight:600}
+.dbtn{display:block;width:100%;text-align:left;background:none;padding:5px 7px;border-left:2px solid transparent;border-radius:0 4px 4px 0;margin-bottom:3px}
+.dll{color:rgba(232,224,208,0.55);font-size:12px}
+.dds{color:rgba(232,224,208,0.25);font-size:10px;margin-top:1px}
+.dbtn.on{background:rgba(255,196,87,0.07);border-left-color:#FFC457}
+.dbtn.on .dll{color:#FFC457;font-weight:600}
+#out{border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:16px;margin-bottom:40px;background:rgba(255,255,255,0.015)}
+#out.on{border-color:rgba(255,196,87,0.18);background:rgba(255,196,87,0.03)}
+.out-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.out-t{color:#E8E0D0;font-size:13px;font-weight:600}
+.out-s{color:rgba(232,224,208,0.28);font-size:10.5px;margin-top:2px}
+#copybtn{border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);color:rgba(232,224,208,0.2)}
+#copybtn.rdy{background:rgba(255,196,87,0.12);border-color:rgba(255,196,87,0.42);color:#FFC457;cursor:pointer}
+#copybtn.done{background:rgba(100,200,100,0.12);border-color:rgba(100,200,100,0.42);color:#88E8A0}
+#ptext{color:rgba(232,224,208,0.72);font-size:11.5px;line-height:1.75;background:rgba(0,0,0,0.25);border-radius:6px;padding:12px;border:1px solid rgba(255,255,255,0.04);white-space:pre-wrap;word-break:break-word;font-family:monospace;display:none}
+#pempty{color:rgba(232,224,208,0.16);font-size:12px;font-style:italic;text-align:center;padding:20px 0}
+@media(max-width:700px){
+  #wrap{flex-direction:column;height:auto}
+  #sb{width:100%;height:auto;max-height:190px;border-right:none;border-bottom:1px solid rgba(255,255,255,0.07)}
+  #panel{padding:14px}
+  .atm{grid-template-columns:1fr 1fr}
+  .grid,.cgrid{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
-  <div id="root"></div>
-  <script type="text/babel">
-    const { useState, useCallback } = React;
-
-```
-const SCENE_CATEGORIES = [
-  { group: "Interior — Rooms", type: "interior-room", scenes: [
-    { id: "living-room", label: "Living Room" }, { id: "bedroom", label: "Bedroom" },
-    { id: "kitchen", label: "Kitchen" }, { id: "bathroom", label: "Bathroom" },
-    { id: "dining-room", label: "Dining Room" }, { id: "home-office", label: "Home Office" },
-    { id: "kids-room", label: "Kids Room" }, { id: "basement", label: "Basement" },
-    { id: "attic", label: "Attic" }, { id: "garage", label: "Garage" },
-  ]},
-  { group: "Interior — Spaces", type: "interior-space", scenes: [
-    { id: "classroom", label: "Classroom" }, { id: "office-workplace", label: "Open Office / Workplace" },
-    { id: "restaurant-interior", label: "Restaurant Interior" }, { id: "cafe-interior", label: "Cafe Interior" },
-    { id: "library", label: "Library" }, { id: "gym", label: "Gym / Fitness Studio" },
-    { id: "art-studio", label: "Art Studio" }, { id: "recording-studio", label: "Recording Studio" },
-    { id: "retail-shop", label: "Retail Shop" }, { id: "hotel-lobby", label: "Hotel Lobby" },
-  ]},
-  { group: "Exterior — Home & Building", type: "exterior-home", scenes: [
-    { id: "house-exterior", label: "House Exterior" }, { id: "patio-backyard", label: "Patio / Backyard" },
-    { id: "front-porch", label: "Front Porch" }, { id: "rooftop-terrace", label: "Rooftop Terrace" },
-    { id: "apartment-balcony", label: "Apartment Balcony" }, { id: "building-facade", label: "Building Facade" },
-  ]},
-  { group: "Cityscape & Urban", type: "cityscape", scenes: [
-    { id: "city-street", label: "City Street" }, { id: "city-skyline", label: "City Skyline" },
-    { id: "urban-alley", label: "Urban Alley" }, { id: "downtown-intersection", label: "Downtown Intersection" },
-    { id: "subway-station", label: "Subway / Transit Station" }, { id: "outdoor-market", label: "Outdoor Market" },
-  ]},
-  { group: "Nature & Landscape", type: "nature", scenes: [
-    { id: "beachfront", label: "Beachfront" }, { id: "mountain-vista", label: "Mountain Vista" },
-    { id: "lakeside", label: "Lakeside" }, { id: "forest-path", label: "Forest / Wooded Path" },
-    { id: "desert-landscape", label: "Desert Landscape" }, { id: "countryside-field", label: "Countryside / Open Field" },
-    { id: "cliffside-ocean", label: "Cliffside Ocean View" }, { id: "waterfall", label: "Waterfall" },
-  ]},
+<div id="hdr">
+  <div><div class="logo">SceneForge</div><div class="sub">DALL-E Prompt Builder for ChatGPT</div></div>
+  <div style="font-size:10px;color:rgba(232,224,208,0.25);font-family:monospace;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:5px;padding:5px 10px">No People</div>
+</div>
+<div id="wrap">
+  <aside id="sb"><div class="slbl">01 - Scene</div><div id="tree"></div></aside>
+  <div id="panel"><div id="panel-inner">
+    <div id="ph" class="placeholder">Choose a scene from the left to unlock descriptors</div>
+    <div id="db" class="desc-block">
+      <div class="scene-hd"><div class="bar"></div><div id="snm" class="snm"></div><div id="stp" class="stp"></div></div>
+      <div class="sublbl">Design Style / Era</div><div class="grid" id="dsg"></div>
+      <div class="sublbl">Color Palette</div><div class="cgrid" id="cpg"></div>
+      <div class="sublbl">Scene Elements <span style="color:rgba(232,224,208,0.16);font-size:9px">(multi-select)</span></div>
+      <div class="chips" id="elg"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="sec">
+      <div class="sec-hd"><div class="step">2</div><div class="sec-t">Visual Style</div></div>
+      <div class="sec-s">How the image looks and feels</div>
+      <div class="grid" id="vsg"></div>
+    </div>
+    <div class="sec">
+      <div class="sec-hd"><div class="step">3</div><div class="sec-t">Camera Perspective</div></div>
+      <div class="sec-s">How the shot is framed</div>
+      <div class="grid" id="cag"></div>
+    </div>
+    <div class="sec">
+      <div class="sec-hd"><div class="step">4</div><div class="sec-t">Aspect Ratio</div></div>
+      <div style="margin-bottom:10px"></div>
+      <div class="ratios" id="rts"></div>
+    </div>
+    <div class="sec">
+      <div class="sec-hd"><div class="step">5</div><div class="sec-t">Atmosphere and Detail</div></div>
+      <div class="sec-s">Mood, time, light and density</div>
+      <div class="atm">
+        <div><div class="atm-lbl">Time of Day</div><div id="tl"></div></div>
+        <div><div class="atm-lbl">Lighting Mood</div><div id="ll"></div></div>
+        <div><div class="atm-lbl">Detail Level</div><div id="dl"></div></div>
+        <div><div class="atm-lbl">Season</div><div id="sl"></div></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div id="out">
+      <div class="out-hd">
+        <div><div class="out-t">Generated Prompt</div><div class="out-s">Paste directly into ChatGPT</div></div>
+        <button id="copybtn">Copy Prompt</button>
+      </div>
+      <div id="pempty">Select a scene to generate your prompt</div>
+      <div id="ptext"></div>
+    </div>
+  </div></div>
+</div>
+<script>
+var SC=[
+  {g:"Interior - Rooms",t:"ir",s:[{i:"lr",l:"Living Room"},{i:"br",l:"Bedroom"},{i:"kt",l:"Kitchen"},{i:"bt",l:"Bathroom"},{i:"dr",l:"Dining Room"},{i:"ho",l:"Home Office"},{i:"kr",l:"Kids Room"},{i:"bs",l:"Basement"},{i:"at",l:"Attic"},{i:"gr",l:"Garage"}]},
+  {g:"Interior - Spaces",t:"is",s:[{i:"cl",l:"Classroom"},{i:"wp",l:"Open Office / Workplace"},{i:"rs",l:"Restaurant Interior"},{i:"ca",l:"Cafe Interior"},{i:"lb",l:"Library"},{i:"gm",l:"Gym / Fitness Studio"},{i:"as",l:"Art Studio"},{i:"rc",l:"Recording Studio"},{i:"rt",l:"Retail Shop"},{i:"hl",l:"Hotel Lobby"}]},
+  {g:"Exterior - Home",t:"eh",s:[{i:"hx",l:"House Exterior"},{i:"pb",l:"Patio / Backyard"},{i:"fp",l:"Front Porch"},{i:"rp",l:"Rooftop Terrace"},{i:"ab",l:"Apartment Balcony"},{i:"bf",l:"Building Facade"}]},
+  {g:"Cityscape and Urban",t:"cy",s:[{i:"cs",l:"City Street"},{i:"ck",l:"City Skyline"},{i:"ua",l:"Urban Alley"},{i:"di",l:"Downtown Intersection"},{i:"sw",l:"Subway Station"},{i:"om",l:"Outdoor Market"}]},
+  {g:"Nature and Landscape",t:"na",s:[{i:"bc",l:"Beachfront"},{i:"mv",l:"Mountain Vista"},{i:"lk",l:"Lakeside"},{i:"fw",l:"Forest / Wooded Path"},{i:"dl",l:"Desert Landscape"},{i:"cf",l:"Countryside / Open Field"},{i:"co",l:"Cliffside Ocean View"},{i:"wf",l:"Waterfall"}]}
 ];
-
-const getSceneType = (id) => { for (const c of SCENE_CATEGORIES) { if (c.scenes.find((s) => s.id === id)) return c.type; } return null; };
-const getSceneLabel = (id) => { for (const c of SCENE_CATEGORIES) { const f = c.scenes.find((s) => s.id === id); if (f) return f.label; } return id; };
-
-const DESIGN_STYLES = {
-  "interior-room": [
-    { id: "modern", label: "Modern", desc: "Clean lines, current materials, uncluttered" },
-    { id: "mid-century", label: "Mid-Century Modern", desc: "50s-60s: tapered legs, warm wood, organic shapes" },
-    { id: "retro-70s", label: "Retro / 70s", desc: "Earthy tones, shag textures, sunburst shapes" },
-    { id: "retro-80s", label: "Retro / 80s", desc: "Bold geometry, neon accents, lacquered surfaces" },
-    { id: "futuristic", label: "Futuristic", desc: "Sleek integrated surfaces, glowing tech, otherworldly" },
-    { id: "industrial-loft", label: "Industrial / Loft", desc: "Exposed brick, raw steel, concrete, Edison bulbs" },
-    { id: "scandinavian", label: "Scandinavian / Nordic", desc: "Light woods, white tones, cozy minimalism" },
-    { id: "bohemian", label: "Bohemian / Eclectic", desc: "Layered textiles, global patterns, collected feel" },
-    { id: "art-deco", label: "Art Deco", desc: "Geometric glamour, gold accents, bold symmetry" },
-    { id: "rustic-farmhouse", label: "Rustic / Farmhouse", desc: "Reclaimed wood, wicker, warm and homespun" },
-    { id: "luxury-glam", label: "Luxury / Hollywood Glam", desc: "Velvet, marble, mirrored surfaces, opulence" },
-    { id: "japanese-zen", label: "Japanese / Zen", desc: "Natural materials, negative space, calm and grounded" },
-    { id: "mediterranean", label: "Mediterranean", desc: "Terracotta, arched doorways, warm plaster walls" },
-    { id: "cottagecore", label: "Cottagecore", desc: "Floral prints, vintage ceramics, garden-cottage softness" },
-    { id: "maximalist", label: "Maximalist", desc: "Pattern on pattern, richly filled, bold and layered" },
-  ],
-  "interior-space": [
-    { id: "modern-corporate", label: "Modern Corporate", desc: "Clean, professional, contemporary commercial" },
-    { id: "retro-vintage", label: "Retro / Vintage", desc: "Era-specific nostalgia: 50s diner, 70s school, 80s office" },
-    { id: "futuristic", label: "Futuristic / High-Tech", desc: "Sleek glass, LED strips, tech-forward" },
-    { id: "industrial", label: "Industrial", desc: "Raw materials, open ceilings, warehouse-converted" },
-    { id: "boutique-artisan", label: "Boutique / Artisan", desc: "Handcrafted, warm lighting, curated and intimate" },
-    { id: "minimalist", label: "Minimalist", desc: "Stripped back, pure function, nothing unnecessary" },
-    { id: "cozy-neighborhood", label: "Cozy / Neighborhood", desc: "Approachable, lived-in, local and welcoming" },
-    { id: "luxury-upscale", label: "Luxury / Upscale", desc: "Premium finishes, mood lighting, high-end throughout" },
-    { id: "academic-classic", label: "Academic / Classic", desc: "Dark wood, leather, book-lined walls, scholarly" },
-    { id: "brutalist", label: "Brutalist", desc: "Raw concrete, monumental scale, unapologetically heavy" },
-  ],
-  "exterior-home": [
-    { id: "modern-contemporary", label: "Modern / Contemporary", desc: "Flat roofs, large windows, clean geometric forms" },
-    { id: "traditional", label: "Traditional", desc: "Classic proportions, symmetrical, timeless" },
-    { id: "craftsman", label: "Craftsman / Bungalow", desc: "Front porch, exposed rafters, natural wood trim" },
-    { id: "mediterranean", label: "Mediterranean", desc: "Stucco walls, terracotta roofs, arched details" },
-    { id: "mid-century", label: "Mid-Century Modern", desc: "Low pitch roof, post-and-beam, open to landscape" },
-    { id: "rustic-cabin", label: "Rustic / Cabin", desc: "Log or wood, stone chimney, forest character" },
-    { id: "futuristic", label: "Futuristic", desc: "Unusual forms, smart glass, bold architecture" },
-    { id: "colonial", label: "Colonial / Georgian", desc: "Formal symmetry, brick facade, shuttered windows" },
-    { id: "victorian", label: "Victorian", desc: "Ornate trim, wraparound porch, layered colors" },
-    { id: "scandinavian", label: "Scandinavian", desc: "Dark wood, pitched roof, weathered and clean" },
-  ],
-  "cityscape": [
-    { id: "modern-glass-steel", label: "Modern / Glass & Steel", desc: "Towers, reflective facades, contemporary urban" },
-    { id: "futuristic-cyber", label: "Futuristic / Cyberpunk", desc: "Neon signs, rain-slicked streets, dense electric energy" },
-    { id: "retro-70s-80s", label: "Retro / 70s-80s", desc: "Warm streetlights, classic signage, pre-digital" },
-    { id: "historic-old-world", label: "Historic / Old World", desc: "Cobblestone, ornate facades, European character" },
-    { id: "noir-gritty", label: "Noir / Gritty", desc: "Dark alleys, steam vents, shadows and tension" },
-    { id: "clean-utopian", label: "Clean / Utopian", desc: "Bright, ordered, green-integrated, peaceful" },
-    { id: "coastal-resort", label: "Coastal / Resort Town", desc: "Pastel buildings, palm trees, waterfront and relaxed" },
-    { id: "east-asian", label: "East Asian / Tokyo", desc: "Dense signage, lanterns, neon layered with tradition" },
-    { id: "brutalist-urban", label: "Brutalist / Soviet", desc: "Concrete towers, monumental scale, raw urban weight" },
-  ],
-  "nature": [
-    { id: "pristine", label: "Pristine / Untouched", desc: "Raw and wild, no human presence" },
-    { id: "golden-warm", label: "Golden & Warm", desc: "Amber late-afternoon light, glowing and radiant" },
-    { id: "moody-dramatic", label: "Moody & Dramatic", desc: "Dark clouds, charged atmosphere, powerful light" },
-    { id: "lush-tropical", label: "Lush & Tropical", desc: "Dense vivid green, humid air, saturated colors" },
-    { id: "arid-sparse", label: "Arid & Sparse", desc: "Minimal vegetation, sun-baked, wide open" },
-    { id: "misty-ethereal", label: "Misty / Ethereal", desc: "Fog rolling in, soft diffused light, dreamlike" },
-    { id: "snowy-winter", label: "Snowy / Winter", desc: "Fresh snow, cold blue light, quiet stillness" },
-    { id: "colorful-fall", label: "Colorful Fall", desc: "Red, orange and gold foliage, crisp and vibrant" },
-    { id: "sunrise-fresh", label: "Sunrise / Fresh", desc: "Early morning light, dew on surfaces, new-day feeling" },
-  ],
+var DS={
+  ir:[{i:"mod",l:"Modern",d:"Clean lines, current materials, uncluttered"},{i:"mc",l:"Mid-Century Modern",d:"50s-60s: tapered legs, warm wood, organic shapes"},{i:"r70",l:"Retro / 70s",d:"Earthy tones, shag textures, sunburst shapes"},{i:"r80",l:"Retro / 80s",d:"Bold geometry, neon accents, lacquered surfaces"},{i:"fut",l:"Futuristic",d:"Sleek surfaces, glowing tech, otherworldly"},{i:"ind",l:"Industrial / Loft",d:"Exposed brick, raw steel, concrete, Edison bulbs"},{i:"sca",l:"Scandinavian / Nordic",d:"Light woods, white tones, cozy minimalism"},{i:"boh",l:"Bohemian / Eclectic",d:"Layered textiles, global patterns, collected feel"},{i:"ade",l:"Art Deco",d:"Geometric glamour, gold accents, bold symmetry"},{i:"rfh",l:"Rustic / Farmhouse",d:"Reclaimed wood, wicker, warm and homespun"},{i:"lxg",l:"Luxury / Hollywood Glam",d:"Velvet, marble, mirrored surfaces, opulence"},{i:"jpz",l:"Japanese / Zen",d:"Natural materials, negative space, calm"},{i:"med",l:"Mediterranean",d:"Terracotta, arched doorways, plaster walls"},{i:"cot",l:"Cottagecore",d:"Floral prints, vintage ceramics, cottage softness"},{i:"max",l:"Maximalist",d:"Pattern on pattern, richly filled, bold"}],
+  is:[{i:"mco",l:"Modern Corporate",d:"Clean, professional, contemporary"},{i:"rtv",l:"Retro / Vintage",d:"Era-specific nostalgia: 50s diner, 80s office"},{i:"hte",l:"Futuristic / High-Tech",d:"Sleek glass, LED strips, tech-forward"},{i:"idn",l:"Industrial",d:"Raw materials, open ceilings, warehouse feel"},{i:"bat",l:"Boutique / Artisan",d:"Handcrafted, warm lighting, curated"},{i:"mnl",l:"Minimalist",d:"Stripped back, pure function"},{i:"coz",l:"Cozy / Neighborhood",d:"Approachable, lived-in, welcoming"},{i:"lxu",l:"Luxury / Upscale",d:"Premium finishes, mood lighting"},{i:"acl",l:"Academic / Classic",d:"Dark wood, leather, book-lined walls"},{i:"bru",l:"Brutalist",d:"Raw concrete, monumental, heavy"}],
+  eh:[{i:"mdc",l:"Modern / Contemporary",d:"Flat roofs, large windows, geometric"},{i:"trd",l:"Traditional",d:"Classic proportions, symmetrical, timeless"},{i:"cft",l:"Craftsman / Bungalow",d:"Front porch, exposed rafters, natural wood"},{i:"mdt",l:"Mediterranean",d:"Stucco walls, terracotta roofs, arches"},{i:"mce",l:"Mid-Century Modern",d:"Low pitch roof, post-and-beam"},{i:"rca",l:"Rustic / Cabin",d:"Log or wood, stone chimney, forest feel"},{i:"fte",l:"Futuristic",d:"Unusual forms, smart glass, bold"},{i:"col",l:"Colonial / Georgian",d:"Formal symmetry, brick, shuttered windows"},{i:"vic",l:"Victorian",d:"Ornate trim, wraparound porch"},{i:"sne",l:"Scandinavian",d:"Dark wood, pitched roof, weathered"}],
+  cy:[{i:"mgs",l:"Modern / Glass and Steel",d:"Towers, reflective facades, contemporary"},{i:"cbp",l:"Futuristic / Cyberpunk",d:"Neon signs, rain-slicked streets, electric"},{i:"r78",l:"Retro / 70s-80s",d:"Warm streetlights, classic signage"},{i:"owb",l:"Historic / Old World",d:"Cobblestone, ornate facades, European"},{i:"nor",l:"Noir / Gritty",d:"Dark alleys, steam vents, shadows"},{i:"utp",l:"Clean / Utopian",d:"Bright, ordered, green-integrated"},{i:"crs",l:"Coastal / Resort Town",d:"Pastel buildings, palm trees, waterfront"},{i:"eac",l:"East Asian / Tokyo",d:"Dense signage, lanterns, neon"},{i:"buc",l:"Brutalist / Soviet",d:"Concrete towers, monumental scale"}],
+  na:[{i:"prs",l:"Pristine / Untouched",d:"Raw and wild, no human presence"},{i:"glw",l:"Golden and Warm",d:"Amber late-afternoon light, radiant"},{i:"mdy",l:"Moody and Dramatic",d:"Dark clouds, charged atmosphere"},{i:"trp",l:"Lush and Tropical",d:"Dense vivid green, humid, saturated"},{i:"ard",l:"Arid and Sparse",d:"Minimal vegetation, sun-baked, open"},{i:"mst",l:"Misty / Ethereal",d:"Fog, soft diffused light, dreamlike"},{i:"snw",l:"Snowy / Winter",d:"Fresh snow, cold blue light, still"},{i:"fal",l:"Colorful Fall",d:"Red, orange and gold foliage, crisp"},{i:"snr",l:"Sunrise / Fresh",d:"Early morning light, dew, new day"}]
 };
+var CP=[{i:"wn",l:"Warm Neutrals",d:"Creams, tans, soft browns",sw:"#C4A882"},{i:"cg",l:"Cool Grays and Blues",d:"Slate, silver, cool white",sw:"#8FA3B1"},{i:"et",l:"Earth Tones",d:"Terracotta, olive, rust, clay",sw:"#B5572A"},{i:"cw",l:"Crisp White",d:"White walls, light floors, airy",sw:"#E0DCD3"},{i:"dm",l:"Dark and Moody",d:"Charcoal, deep navy, forest green",sw:"#2C3E50"},{i:"bs",l:"Bold and Saturated",d:"High contrast, strong colors",sw:"#E63946"},{i:"ps",l:"Pastel and Soft",d:"Muted pinks, sage, lavender",sw:"#B8D8D8"},{i:"mo",l:"Monochromatic",d:"One dominant color in varying tones",sw:"#7B6FA0"},{i:"ng",l:"Natural and Green",d:"Plants, wood tones, stone",sw:"#4A7C59"},{i:"bw",l:"Black and White",d:"Desaturated, timeless and stark",sw:"#777"},{i:"jt",l:"Jewel Tones",d:"Sapphire, emerald, amber, ruby",sw:"#1A6B5A"},{i:"sb",l:"Sun-Bleached",d:"Faded, washed out, coastal aged",sw:"#D4C9A8"}];
+var EL={ir:["Fireplace","Large Windows","Skylights","Plants and Greenery","Exposed Ceiling Beams","Bookshelves","Area Rug","Pendant Lighting","Wall Art","Curtains / Drapes","Built-In Cabinetry","Bar Cart / Wet Bar","TV / Media Wall","Window Seat / Nook","Statement Ceiling","Open Floor Plan","Wainscoting / Paneling","Ceiling Fan"],is:["Large Windows","Plants and Greenery","Statement Lighting","Exposed / Open Ceiling","Chalkboard / Whiteboard","Neon Signage","Bar / Counter","Stage / Performance Area","Shelving / Bookshelves","Skylights","Artwork on Walls","Communal Tables","Fireplace","Lounge Seating"],eh:["Mature Trees","Manicured Lawn","Garden Beds","Pool / Spa","Outdoor Seating","Driveway / Walkway","Fence / Gate","Outdoor Lighting","Covered Porch / Pergola","Water Feature","Fire Pit","String Lights","Outdoor Kitchen","Raised Garden Beds"],cy:["Neon Signs","Street Lights","Rain / Wet Streets","Steam from Vents","Graffiti / Street Art","Market Stalls","Parked Cars","Motion Blur Traffic","Street Trees","Cafe Seating","Billboards","Fog / Haze","Overhead Wires","Cobblestone Streets","Fire Escapes","Subway Entrance"],na:["Still / Reflective Water","Moving Water / Waves","Wildflowers","Dramatic Rocks","Fallen Logs","Visible Sunrays","Stormy Clouds","Snow / Ice","Birds in Sky","Lone Tree","Mist / Ground Fog","Dirt Path / Trail","Dock / Pier","Sand Dunes","Moon / Stars","Rainbow"]};
+var VS=[{i:"pr",l:"Photorealistic",d:"Looks like a real photograph, sharp and true-to-life"},{i:"cm",l:"Cinematic and Moody",d:"Dramatic lighting, deep shadows, subtle film grain"},{i:"sd",l:"Soft and Dreamy",d:"Slightly glowy, gentle blur, warm diffusion"},{i:"su",l:"Hallucinated / Surreal",d:"Colors too saturated, edges too perfect"},{i:"hp",l:"HDR Punchy",d:"High contrast, hyper-saturated, over-processed"},{i:"wf",l:"Warm Film Grain",d:"Analog film warmth, natural grain, golden tones"},{i:"fe",l:"Flat Editorial",d:"Even lighting, muted palette, magazine-clean"},{i:"pw",l:"Painterly Realism",d:"Oil painting texture meeting photographic accuracy"}];
+var CA=[{i:"rw",l:"Real Estate Wide",d:"Wide angle, distortion-corrected, full coverage"},{i:"es",l:"Editorial Straight-On",d:"Flat, centered, architecture magazine style"},{i:"cp",l:"Corner Perspective",d:"From a corner showing two walls and depth"},{i:"el",l:"Eye Level Natural",d:"Standing in the space, looking straight ahead"},{i:"ad",l:"Aerial / Drone",d:"Looking down from above at an angle"},{i:"sl",l:"Street Level",d:"Low, wide perspective for cityscapes"}];
+var RA=[{i:"16:9",d:"Widescreen"},{i:"4:3",d:"Classic"},{i:"1:1",d:"Square"},{i:"9:16",d:"Vertical"},{i:"3:2",d:"Photo"},{i:"21:9",d:"Cinematic"}];
+var TM=["Dawn","Morning","Midday","Golden Hour","Dusk / Sunset","Night","Overcast"];
+var LI=["Bright and Airy","Warm and Cozy","Cool and Modern","Dramatic","Soft and Diffused","Moody / Low Key"];
+var DT=[{l:"Minimal and Clean",d:"Sparse, purposeful, everything has its place"},{l:"Styled and Lived-In",d:"Comfortable and real, a few personal touches"},{l:"Layered and Rich",d:"Full of detail, texture and objects"}];
+var SE=["No Preference","Spring","Summer","Autumn","Winter"];
+var TL={ir:"Interior Room",is:"Interior Space",eh:"Exterior / Home",cy:"Cityscape",na:"Nature"};
+var DSP={mod:"designed in a modern contemporary style with clean lines",mc:"designed in a mid-century modern style with tapered legs and warm wood tones",r70:"designed in a 1970s retro style with earthy tones and shag textures",r80:"designed in a 1980s retro style with bold geometry and neon accents",fut:"designed in a futuristic style with sleek surfaces and glowing technology",ind:"designed in an industrial loft style with exposed brick, raw steel and concrete floors",sca:"designed in a Scandinavian style with light woods and cozy minimalism",boh:"designed in a bohemian eclectic style with layered textiles and global patterns",ade:"designed in an Art Deco style with geometric glamour and gold accents",rfh:"designed in a rustic farmhouse style with reclaimed wood and warm textures",lxg:"designed in a luxury Hollywood Glam style with velvet, marble and mirrored accents",jpz:"designed in a Japanese Zen style with natural materials and generous negative space",med:"designed in a Mediterranean style with terracotta, arched doorways and plaster walls",cot:"designed in a cottagecore style with floral prints and vintage ceramics",max:"designed in a maximalist style with pattern on pattern and bold character",mco:"in a modern corporate style with clean professional lines",rtv:"in a retro vintage style with era-specific nostalgia",hte:"in a futuristic high-tech style with sleek glass and LED lighting",idn:"in an industrial style with raw exposed materials",bat:"in a boutique artisan style with handcrafted details and warm intimate lighting",mnl:"in a minimalist style stripped back to pure function",coz:"in a cozy neighborhood style that is approachable and lived-in",lxu:"in a luxury upscale style with premium finishes and mood lighting",acl:"in an academic classic style with dark wood and book-lined walls",bru:"in a brutalist style with raw exposed concrete",mdc:"with modern contemporary architecture featuring flat roofs and large windows",trd:"with traditional architecture and classic proportions",cft:"with craftsman bungalow architecture featuring a front porch and natural wood trim",mdt:"with Mediterranean architecture featuring stucco walls and terracotta roofs",mce:"with mid-century modern architecture featuring a low pitch roof",rca:"with rustic cabin architecture featuring log construction and stone chimney",col:"with Colonial architecture featuring formal symmetry and brick facade",vic:"with Victorian architecture featuring ornate trim and wraparound porch",sne:"with Scandinavian architecture featuring dark wood and pitched roof",fte:"with futuristic architecture featuring unusual bold forms",mgs:"in a modern glass and steel urban style with towers and reflective facades",cbp:"in a futuristic cyberpunk style with neon signs and rain-slicked streets",r78:"in a retro 1970s-80s urban style with warm streetlights and classic signage",owb:"in a historic old-world style with cobblestone streets and ornate European facades",nor:"in a film noir style with dark alleys, steam and deep urban shadows",utp:"in a clean utopian city style with bright ordered streets and green integration",crs:"in a coastal resort style with pastel buildings, palm trees and waterfront atmosphere",eac:"in an East Asian urban style with dense layered signage, lanterns and neon",buc:"in a brutalist Soviet urban style with massive concrete towers",prs:"that is pristine and untouched, raw wild landscape with no human presence",glw:"bathed in golden warm amber late-afternoon light",mdy:"with a moody dramatic atmosphere and charged powerful light",trp:"in a lush tropical setting with dense vivid green vegetation",ard:"in an arid sparse landscape with minimal vegetation and sun-baked terrain",mst:"with a misty ethereal quality and dreamlike atmosphere",snw:"in a snowy winter setting with fresh snow and cold blue light",fal:"in peak autumn with red, orange and gold foliage",snr:"at sunrise with early morning light and dew on surfaces"};
+var CPP={wn:"a warm neutral color palette of creams, tans and soft browns",cg:"a cool gray and blue color palette of slate and silver tones",et:"an earth-tone palette of terracotta, olive, rust and clay",cw:"a crisp white and bright palette with white surfaces and light airy tones",dm:"a dark and moody palette of charcoal, deep navy and forest green",bs:"a bold saturated palette with high contrast and strong vibrant choices",ps:"a soft pastel palette of muted pinks, sage and lavender",mo:"a monochromatic palette with one dominant color in varying tones",ng:"a natural green palette of plants, wood tones and stone",bw:"a desaturated black and white palette",jt:"a jewel-tone palette of sapphire, emerald, amber and ruby",sb:"a sun-bleached palette of faded washed-out coastal tones"};
+var VSP={pr:"photographed in a highly photorealistic style, sharp and true-to-life",cm:"rendered in a cinematic style with dramatic lighting, deep shadows and film grain",sd:"with a soft dreamy quality, gentle diffusion and warm hazy atmosphere",su:"with a slightly surreal hallucinated quality and hyper-saturated colors",hp:"in an HDR photography style with punchy contrast and vivid saturation",wf:"shot on analog film with warm golden tones and natural grain",fe:"in a flat editorial style with even lighting and muted palette",pw:"in a painterly realism style with oil painting texture"};
+var CAP={rw:"shot with a corrected wide-angle lens with minimal distortion",es:"composed as a straight-on editorial shot, centered and flat",cp:"photographed from a corner angle showing two walls and depth",el:"captured at natural standing eye level",ad:"photographed from an aerial drone perspective looking down",sl:"shot at low street level with a wide grounded perspective"};
 
-const COLOR_PALETTES = [
-  { id: "warm-neutrals", label: "Warm Neutrals", desc: "Creams, tans, soft browns", swatch: "#C4A882" },
-  { id: "cool-grays", label: "Cool Grays & Blues", desc: "Slate, silver, cool white", swatch: "#8FA3B1" },
-  { id: "earth-tones", label: "Earth Tones", desc: "Terracotta, olive, rust, clay", swatch: "#B5572A" },
-  { id: "crisp-white", label: "Crisp White & Bright", desc: "White walls, light floors, airy", swatch: "#E0DCD3" },
-  { id: "dark-moody", label: "Dark & Moody", desc: "Charcoal, deep navy, forest green", swatch: "#2C3E50" },
-  { id: "bold-saturated", label: "Bold & Saturated", desc: "High contrast, strong color choices", swatch: "#E63946" },
-  { id: "pastel-soft", label: "Pastel & Soft", desc: "Muted pinks, sage, lavender", swatch: "#B8D8D8" },
-  { id: "monochromatic", label: "Monochromatic", desc: "One dominant color in varying tones", swatch: "#7B6FA0" },
-  { id: "natural-greens", label: "Natural & Green", desc: "Plants, wood tones, stone", swatch: "#4A7C59" },
-  { id: "black-white", label: "Black & White", desc: "Desaturated, timeless and stark", swatch: "#777777" },
-  { id: "jewel-tones", label: "Jewel Tones", desc: "Deep sapphire, emerald, amber, ruby", swatch: "#1A6B5A" },
-  { id: "sun-bleached", label: "Sun-Bleached", desc: "Faded, washed out, coastal and aged", swatch: "#D4C9A8" },
-];
+var ST={sc:null,stype:null,ds:null,cp:null,el:[],vs:"pr",ca:"rw",ra:"16:9",ti:"Golden Hour",li:"Warm and Cozy",de:"Styled and Lived-In",se:"No Preference"};
+var EXP={"Interior - Rooms":true};
 
-const SCENE_ELEMENTS = {
-  "interior-room": [
-    { id: "fireplace", label: "Fireplace" }, { id: "large-windows", label: "Large Windows" },
-    { id: "skylights", label: "Skylights" }, { id: "plants-greenery", label: "Plants & Greenery" },
-    { id: "exposed-beams", label: "Exposed Ceiling Beams" }, { id: "bookshelves", label: "Bookshelves" },
-    { id: "area-rug", label: "Area Rug" }, { id: "pendant-lights", label: "Pendant Lighting" },
-    { id: "wall-art", label: "Wall Art / Gallery Wall" }, { id: "curtains-drapes", label: "Curtains / Drapes" },
-    { id: "built-ins", label: "Built-In Cabinetry" }, { id: "bar-cart", label: "Bar Cart / Wet Bar" },
-    { id: "tv-media-wall", label: "TV / Media Wall" }, { id: "window-seat", label: "Window Seat / Nook" },
-    { id: "statement-ceiling", label: "Statement Ceiling" }, { id: "open-floor-plan", label: "Open Floor Plan" },
-    { id: "wainscoting", label: "Wainscoting / Paneling" }, { id: "ceiling-fan", label: "Ceiling Fan" },
-  ],
-  "interior-space": [
-    { id: "large-windows", label: "Large Windows / Natural Light" }, { id: "plants-greenery", label: "Plants & Greenery" },
-    { id: "statement-lights", label: "Statement Lighting" }, { id: "open-ceiling", label: "Exposed / Open Ceiling" },
-    { id: "chalkboard", label: "Chalkboard / Whiteboard" }, { id: "neon-signage", label: "Neon Signage" },
-    { id: "bar-counter", label: "Bar / Counter" }, { id: "stage-area", label: "Stage / Performance Area" },
-    { id: "bookshelves", label: "Shelving / Bookshelves" }, { id: "skylights", label: "Skylights" },
-    { id: "artwork-walls", label: "Artwork on Walls" }, { id: "communal-tables", label: "Communal / Long Tables" },
-    { id: "fireplace", label: "Fireplace" }, { id: "lounge-seating", label: "Lounge Seating Area" },
-  ],
-  "exterior-home": [
-    { id: "mature-trees", label: "Mature Trees" }, { id: "manicured-lawn", label: "Manicured Lawn" },
-    { id: "garden-beds", label: "Garden Beds / Landscaping" }, { id: "pool-spa", label: "Pool / Spa" },
-    { id: "outdoor-seating", label: "Outdoor Seating Area" }, { id: "driveway", label: "Driveway / Walkway" },
-    { id: "fence-gate", label: "Fence / Gate" }, { id: "outdoor-lighting", label: "Outdoor Lighting" },
-    { id: "covered-porch", label: "Covered Porch / Pergola" }, { id: "water-feature", label: "Water Feature / Fountain" },
-    { id: "fire-pit", label: "Fire Pit" }, { id: "string-lights", label: "String Lights" },
-    { id: "outdoor-kitchen", label: "Outdoor Kitchen / Grill" }, { id: "raised-garden", label: "Raised Garden Beds" },
-  ],
-  "cityscape": [
-    { id: "neon-signs", label: "Neon Signs" }, { id: "street-lights", label: "Street Lights" },
-    { id: "rain-wet-streets", label: "Rain / Wet Streets" }, { id: "steam-vents", label: "Steam from Vents" },
-    { id: "graffiti", label: "Graffiti / Street Art" }, { id: "market-stalls", label: "Market Stalls / Vendors" },
-    { id: "parked-cars", label: "Parked Cars" }, { id: "traffic-blur", label: "Motion Blur Traffic" },
-    { id: "trees-planters", label: "Street Trees / Planters" }, { id: "outdoor-seating", label: "Cafe / Outdoor Seating" },
-    { id: "billboards", label: "Billboards / Signage" }, { id: "fog-haze", label: "Fog / Atmospheric Haze" },
-    { id: "overhead-wires", label: "Overhead Wires" }, { id: "cobblestone", label: "Cobblestone Streets" },
-    { id: "fire-escape", label: "Fire Escapes" }, { id: "subway-entrance", label: "Subway Entrance" },
-  ],
-  "nature": [
-    { id: "still-water", label: "Still / Reflective Water" }, { id: "moving-water", label: "Moving Water / Waves" },
-    { id: "wildflowers", label: "Wildflowers" }, { id: "dramatic-rocks", label: "Dramatic Rocks / Boulders" },
-    { id: "fallen-logs", label: "Fallen Logs / Deadwood" }, { id: "visible-sun", label: "Visible Sun / Sunrays" },
-    { id: "stormy-clouds", label: "Stormy Clouds" }, { id: "snow-ice", label: "Snow / Ice" },
-    { id: "birds", label: "Birds in Sky" }, { id: "lone-tree", label: "Lone / Solitary Tree" },
-    { id: "mist-fog", label: "Mist / Ground Fog" }, { id: "dirt-path", label: "Dirt Path / Trail" },
-    { id: "dock-pier", label: "Dock / Pier" }, { id: "sand-dunes", label: "Sand Dunes" },
-    { id: "moon", label: "Moon / Stars Visible" }, { id: "rainbow", label: "Rainbow" },
-  ],
-};
+function g(id){return document.getElementById(id);}
 
-const STYLES = [
-  { id: "photorealistic", label: "Photorealistic", desc: "Looks like a real photograph: sharp, accurate, true-to-life" },
-  { id: "cinematic-moody", label: "Cinematic & Moody", desc: "Dramatic lighting, deep shadows, subtle film grain" },
-  { id: "soft-dreamy", label: "Soft & Dreamy", desc: "Slightly glowy, gentle blur, warm diffusion" },
-  { id: "hallucinated", label: "Hallucinated / Surreal", desc: "Colors too saturated, edges too perfect, slightly off" },
-  { id: "hdr-punchy", label: "HDR Punchy", desc: "High contrast, hyper-saturated, over-processed" },
-  { id: "warm-film", label: "Warm Film Grain", desc: "Analog film warmth, natural grain, golden tones" },
-  { id: "flat-editorial", label: "Flat Editorial", desc: "Even lighting, muted palette, magazine-clean" },
-  { id: "painterly-real", label: "Painterly Realism", desc: "Oil painting texture meeting photographic accuracy" },
-];
-
-const CAMERAS = [
-  { id: "real-estate-wide", label: "Real Estate Wide", desc: "Wide angle, distortion-corrected, full coverage" },
-  { id: "editorial-straight", label: "Editorial Straight-On", desc: "Flat, centered, architecture magazine style" },
-  { id: "corner-perspective", label: "Corner Perspective", desc: "From a corner showing two walls and depth" },
-  { id: "eye-level-natural", label: "Eye Level Natural", desc: "Standing in the space, looking straight ahead" },
-  { id: "aerial-drone", label: "Aerial / Drone", desc: "Looking down from above at an angle" },
-  { id: "street-level", label: "Street Level", desc: "Low, wide perspective for cityscapes and exteriors" },
-];
-
-const ASPECT_RATIOS = [
-  { id: "16:9", label: "16:9", desc: "Widescreen" }, { id: "4:3", label: "4:3", desc: "Classic" },
-  { id: "1:1", label: "1:1", desc: "Square" }, { id: "9:16", label: "9:16", desc: "Vertical" },
-  { id: "3:2", label: "3:2", desc: "Standard Photo" }, { id: "21:9", label: "21:9", desc: "Cinematic" },
-];
-
-const TIME_OF_DAY = [
-  { id: "dawn", label: "Dawn" }, { id: "morning", label: "Morning" }, { id: "midday", label: "Midday" },
-  { id: "golden-hour", label: "Golden Hour" }, { id: "dusk", label: "Dusk / Sunset" },
-  { id: "night", label: "Night" }, { id: "overcast", label: "Overcast" },
-];
-
-const LIGHTING = [
-  { id: "bright-airy", label: "Bright & Airy" }, { id: "warm-cozy", label: "Warm & Cozy" },
-  { id: "cool-modern", label: "Cool & Modern" }, { id: "dramatic", label: "Dramatic" },
-  { id: "soft-diffused", label: "Soft & Diffused" }, { id: "moody-low", label: "Moody / Low Key" },
-];
-
-const DETAIL_LEVEL = [
-  { id: "minimal-clean", label: "Minimal & Clean", desc: "Sparse, purposeful, everything has its place" },
-  { id: "styled-lived", label: "Styled & Lived-In", desc: "Comfortable and real, a few personal touches" },
-  { id: "layered-rich", label: "Layered & Rich", desc: "Full of detail, texture, objects, maximalist" },
-];
-
-const SEASON = [
-  { id: "none", label: "No Preference" }, { id: "spring", label: "Spring" },
-  { id: "summer", label: "Summer" }, { id: "autumn", label: "Autumn" }, { id: "winter", label: "Winter" },
-];
-
-const DS_PROMPTS = {
-  "modern": "designed in a modern contemporary style with clean lines and current materials",
-  "mid-century": "designed in a mid-century modern style with tapered legs, warm wood tones and organic 1950s-60s shapes",
-  "retro-70s": "designed in a 1970s retro style with earthy tones, shag textures and sunburst shapes",
-  "retro-80s": "designed in a 1980s retro style with bold geometry, neon accents and lacquered surfaces",
-  "futuristic": "designed in a futuristic style with sleek integrated surfaces, glowing technology and otherworldly materials",
-  "industrial-loft": "designed in an industrial loft style with exposed brick, raw steel, concrete floors and Edison bulb lighting",
-  "scandinavian": "designed in a Scandinavian Nordic style with light woods, crisp white tones and cozy minimalism",
-  "bohemian": "designed in a bohemian eclectic style with layered textiles, global-inspired patterns and a collected-over-time character",
-  "art-deco": "designed in an Art Deco style with geometric glamour, gold accents and bold symmetrical forms",
-  "rustic-farmhouse": "designed in a rustic farmhouse style with reclaimed wood, wicker and warm homespun textures",
-  "luxury-glam": "designed in a luxury Hollywood Glam style with velvet upholstery, marble surfaces, mirrored accents and opulence",
-  "japanese-zen": "designed in a Japanese Zen style with natural materials, generous negative space and a calm meditative atmosphere",
-  "mediterranean": "designed in a Mediterranean style with warm terracotta, arched doorways and whitewashed plaster walls",
-  "cottagecore": "designed in a cottagecore style with floral prints, vintage ceramics and garden-cottage softness",
-  "maximalist": "designed in a maximalist style with pattern on pattern, bold color combinations and every surface filled with character",
-  "modern-corporate": "designed in a modern corporate style with clean professional lines and contemporary commercial materials",
-  "retro-vintage": "designed in a retro vintage style with era-specific nostalgia and period-accurate details",
-  "industrial": "designed in an industrial style with raw exposed materials, open structure and converted warehouse character",
-  "boutique-artisan": "designed in a boutique artisan style with handcrafted details, warm lighting and an intimate curated feel",
-  "minimalist": "designed in a minimalist style stripped back to pure function with nothing unnecessary",
-  "cozy-neighborhood": "designed in a cozy neighborhood style that is approachable, lived-in and welcoming",
-  "luxury-upscale": "designed in a luxury upscale style with premium finishes, mood lighting and high-end details throughout",
-  "academic-classic": "designed in an academic classic style with dark wood paneling, leather seating and book-lined walls",
-  "brutalist": "designed in a brutalist style with raw exposed concrete, monumental scale and unapologetically heavy forms",
-  "modern-contemporary": "with modern contemporary architecture featuring flat roofs, large windows and clean geometric forms",
-  "traditional": "with traditional architecture featuring classic proportions and symmetrical design",
-  "craftsman": "with craftsman bungalow architecture featuring a front porch, exposed rafters and natural wood trim",
-  "rustic-cabin": "with rustic cabin architecture featuring log or wood construction and stone chimney",
-  "colonial": "with Colonial Georgian architecture featuring formal symmetry, a brick facade and shuttered windows",
-  "victorian": "with Victorian architecture featuring ornate decorative trim, a wraparound porch and layered colors",
-  "modern-glass-steel": "in a modern glass and steel urban style with towers, reflective facades and contemporary cityscape character",
-  "futuristic-cyber": "in a futuristic cyberpunk style with neon signs, rain-slicked streets and dense layered electric energy",
-  "retro-70s-80s": "in a retro 1970s-80s urban style with warm streetlights, classic signage and pre-digital urban character",
-  "historic-old-world": "in a historic old-world style with cobblestone streets, ornate building facades and European character",
-  "noir-gritty": "in a film noir gritty style with dark alleys, steam from grates, deep shadows and urban tension",
-  "clean-utopian": "in a clean utopian city style with bright ordered streets, green integration and a peaceful atmosphere",
-  "coastal-resort": "in a coastal resort town style with pastel buildings, palm trees and a relaxed waterfront atmosphere",
-  "east-asian": "in an East Asian urban style with dense layered signage, lanterns and neon interleaved with traditional architecture",
-  "brutalist-urban": "in a brutalist Soviet urban style with massive concrete towers and monumental scale",
-  "pristine": "that is pristine and untouched: raw wild landscape with no human presence",
-  "golden-warm": "bathed in golden warm amber late-afternoon light with a radiant glow",
-  "moody-dramatic": "with a moody dramatic atmosphere featuring dark storm clouds and charged powerful light",
-  "lush-tropical": "in a lush tropical setting with dense vivid green vegetation, humid air and saturated colors",
-  "arid-sparse": "in an arid sparse landscape with minimal vegetation, sun-baked terrain and wide open skies",
-  "misty-ethereal": "with a misty ethereal quality with fog softening the light and a dreamlike atmosphere",
-  "snowy-winter": "in a snowy winter setting with fresh snow coverage, cold blue light and quiet stillness",
-  "colorful-fall": "in peak autumn with red, orange and gold foliage, crisp energy and vibrant color",
-  "sunrise-fresh": "at sunrise with early morning light, dew on surfaces and a fresh start-of-day feeling",
-};
-
-const COLOR_PROMPTS = {
-  "warm-neutrals": "a warm neutral color palette of creams, tans and soft browns",
-  "cool-grays": "a cool gray and blue color palette of slate, silver and cool white tones",
-  "earth-tones": "an earth-tone color palette of terracotta, olive green, rust and clay",
-  "crisp-white": "a crisp white and bright color palette with white surfaces and light airy tones",
-  "dark-moody": "a dark and moody color palette of charcoal, deep navy and forest green",
-  "bold-saturated": "a bold saturated color palette with high contrast and strong vibrant choices",
-  "pastel-soft": "a soft pastel color palette of muted pinks, sage green and lavender",
-  "monochromatic": "a monochromatic color palette with one dominant color in varying tones",
-  "natural-greens": "a natural green color palette inspired by plants, wood tones and stone",
-  "black-white": "a desaturated black and white color palette, timeless and graphic",
-  "jewel-tones": "a jewel-tone color palette of deep sapphire, emerald, amber and ruby",
-  "sun-bleached": "a sun-bleached color palette of faded washed-out coastal and aged tones",
-};
-
-function buildPrompt(state) {
-  if (!state.scene) return "";
-  const sceneType = getSceneType(state.scene);
-  const parts = ["A scene of " + getSceneLabel(state.scene).toLowerCase()];
-  if (state.designStyle && DS_PROMPTS[state.designStyle]) parts.push(DS_PROMPTS[state.designStyle]);
-  if (state.colorPalette && COLOR_PROMPTS[state.colorPalette]) parts.push("with " + COLOR_PROMPTS[state.colorPalette]);
-  if (state.elements && state.elements.length) {
-    const allEls = SCENE_ELEMENTS[sceneType] || [];
-    const labels = state.elements.map((id) => allEls.find((e) => e.id === id)).filter(Boolean).map((e) => e.label.toLowerCase());
-    if (labels.length) parts.push("the scene includes " + labels.join(", "));
+function buildTree(){
+  var t=g("tree");t.innerHTML="";
+  for(var i=0;i<SC.length;i++){
+    var cat=SC[i];
+    var gh=document.createElement("button");
+    gh.className="ghdr";
+    gh.innerHTML="<span>"+cat.g+"</span><span>"+(EXP[cat.g]?"-":"+")+"</span>";
+    (function(c){gh.onclick=function(){EXP[c.g]=!EXP[c.g];buildTree();};})(cat);
+    t.appendChild(gh);
+    if(EXP[cat.g]){
+      for(var j=0;j<cat.s.length;j++){
+        var sc=cat.s[j];
+        var sb=document.createElement("button");
+        sb.className="sbtn"+(ST.sc===sc.i?" on":"");
+        sb.textContent=sc.l;
+        (function(sid,stype){sb.onclick=function(){ST.sc=sid;ST.stype=stype;ST.ds=null;ST.cp=null;ST.el=[];render();};})(sc.i,cat.t);
+        t.appendChild(sb);
+      }
+    }
   }
-  const vstyle = { "photorealistic": "photographed in a highly photorealistic style, sharp and true-to-life", "cinematic-moody": "rendered in a cinematic style with dramatic lighting, deep shadows and subtle film grain", "soft-dreamy": "with a soft dreamy quality, gentle diffusion, glowy edges, warm and hazy atmosphere", "hallucinated": "with a slightly surreal hallucinated quality, hyper-saturated colors, uncanny perfection", "hdr-punchy": "in an HDR photography style with punchy contrast, vivid saturation, everything crisp", "warm-film": "shot on analog film with warm golden tones, natural grain and soft imperfections", "flat-editorial": "in a flat editorial style with even controlled lighting, muted palette, magazine-clean", "painterly-real": "in a painterly realism style with oil painting texture meeting photographic accuracy" };
-  if (state.style) parts.push(vstyle[state.style] || "");
-  const cam = { "real-estate-wide": "shot with a corrected wide-angle lens, minimal distortion, full coverage", "editorial-straight": "composed as a straight-on editorial shot, centered and flat", "corner-perspective": "photographed from a corner angle showing two walls and full depth", "eye-level-natural": "captured at natural standing eye level as if you are physically present", "aerial-drone": "photographed from an aerial drone perspective looking down at an angle", "street-level": "shot at low street level with a wide grounded perspective" };
-  if (state.camera) parts.push(cam[state.camera] || "");
-  const t = TIME_OF_DAY.find((x) => x.id === state.time);
-  const l = LIGHTING.find((x) => x.id === state.lighting);
-  if (t && l) parts.push(t.label.toLowerCase() + " with " + l.label.toLowerCase() + " quality lighting");
-  const sn = SEASON.find((x) => x.id === state.season);
-  if (sn && sn.id !== "none") parts.push(sn.label.toLowerCase() + " season");
-  const det = { "minimal-clean": "the space is minimal and uncluttered with clean intentional simplicity", "styled-lived": "the space feels lived-in and styled with personal touches", "layered-rich": "the space is rich with layered detail, textures and objects" };
-  if (state.detail) parts.push(det[state.detail] || "");
-  const r = ASPECT_RATIOS.find((x) => x.id === state.ratio);
-  if (r) parts.push("compose for a " + r.id + " (" + r.desc + ") aspect ratio");
+}
+
+function mkCard(item,active,fn){
+  var b=document.createElement("button");
+  b.className="card"+(active?" on":"");
+  b.innerHTML="<div class='cl'>"+item.l+"</div>"+(item.d?"<div class='cd'>"+item.d+"</div>":"");
+  b.onclick=fn;
+  return b;
+}
+
+function render(){
+  buildTree();
+  var ph=g("ph"),db=g("db");
+  if(!ST.sc){ph.style.display="block";db.style.display="none";}
+  else{
+    ph.style.display="none";db.style.display="block";
+    var scl="";
+    for(var i=0;i<SC.length;i++){for(var j=0;j<SC[i].s.length;j++){if(SC[i].s[j].i===ST.sc){scl=SC[i].s[j].l;break;}}}
+    g("snm").textContent=scl;
+    g("stp").textContent="- "+(TL[ST.stype]||"");
+    var dsg=g("dsg");dsg.innerHTML="";
+    var dsi=DS[ST.stype]||[];
+    for(var i=0;i<dsi.length;i++){
+      (function(item){dsg.appendChild(mkCard(item,ST.ds===item.i,function(){ST.ds=ST.ds===item.i?null:item.i;render();}));})(dsi[i]);
+    }
+    var cpg=g("cpg");cpg.innerHTML="";
+    for(var i=0;i<CP.length;i++){
+      (function(item){
+        var b=document.createElement("button");
+        b.className="ccrd"+(ST.cp===item.i?" on":"");
+        b.innerHTML="<div class='dot' style='background:"+item.sw+"'></div><div><div class='cl'>"+item.l+"</div><div class='cd'>"+item.d+"</div></div>";
+        b.onclick=function(){ST.cp=ST.cp===item.i?null:item.i;render();};
+        cpg.appendChild(b);
+      })(CP[i]);
+    }
+    var elg=g("elg");elg.innerHTML="";
+    var eli=EL[ST.stype]||[];
+    for(var i=0;i<eli.length;i++){
+      (function(lbl){
+        var b=document.createElement("button");
+        b.className="chip"+(ST.el.indexOf(lbl)>-1?" on":"");
+        b.textContent=lbl;
+        b.onclick=function(){var idx=ST.el.indexOf(lbl);if(idx>-1)ST.el.splice(idx,1);else ST.el.push(lbl);render();};
+        elg.appendChild(b);
+      })(eli[i]);
+    }
+  }
+
+  var vsg=g("vsg");vsg.innerHTML="";
+  for(var i=0;i<VS.length;i++){(function(item){vsg.appendChild(mkCard(item,ST.vs===item.i,function(){ST.vs=item.i;render();}));})(VS[i]);}
+  var cag=g("cag");cag.innerHTML="";
+  for(var i=0;i<CA.length;i++){(function(item){cag.appendChild(mkCard(item,ST.ca===item.i,function(){ST.ca=item.i;render();}));})(CA[i]);}
+  var rts=g("rts");rts.innerHTML="";
+  for(var i=0;i<RA.length;i++){
+    (function(r){
+      var b=document.createElement("button");
+      b.className="rbtn"+(ST.ra===r.i?" on":"");
+      b.innerHTML="<div class='rl'>"+r.i+"</div><div class='rd'>"+r.d+"</div>";
+      b.onclick=function(){ST.ra=r.i;render();};
+      rts.appendChild(b);
+    })(RA[i]);
+  }
+
+  function mkList(cid,items,sk){
+    var c=g(cid);c.innerHTML="";
+    for(var i=0;i<items.length;i++){
+      (function(item){
+        var b=document.createElement("button");
+        b.className="lbtn"+(ST[sk]===item?" on":"");
+        b.textContent=item;
+        b.onclick=function(){ST[sk]=item;render();};
+        c.appendChild(b);
+      })(items[i]);
+    }
+  }
+  mkList("tl",TM,"ti");mkList("ll",LI,"li");mkList("sl",SE,"se");
+  var dl=g("dl");dl.innerHTML="";
+  for(var i=0;i<DT.length;i++){
+    (function(d){
+      var b=document.createElement("button");
+      b.className="dbtn"+(ST.de===d.l?" on":"");
+      b.innerHTML="<div class='dll'>"+d.l+"</div><div class='dds'>"+d.d+"</div>";
+      b.onclick=function(){ST.de=d.l;render();};
+      dl.appendChild(b);
+    })(DT[i]);
+  }
+
+  var p=buildP();
+  var out=g("out"),cb=g("copybtn"),pt=g("ptext"),pe=g("pempty");
+  if(p){out.classList.add("on");cb.className="rdy";pt.style.display="block";pe.style.display="none";pt.textContent=p;}
+  else{out.classList.remove("on");cb.className="";pt.style.display="none";pe.style.display="block";}
+}
+
+function buildP(){
+  if(!ST.sc)return"";
+  var scl="";
+  for(var i=0;i<SC.length;i++){for(var j=0;j<SC[i].s.length;j++){if(SC[i].s[j].i===ST.sc){scl=SC[i].s[j].l;break;}}}
+  var parts=["A scene of "+scl.toLowerCase()];
+  if(ST.ds&&DSP[ST.ds])parts.push(DSP[ST.ds]);
+  if(ST.cp&&CPP[ST.cp])parts.push("with "+CPP[ST.cp]);
+  if(ST.el.length)parts.push("the scene includes "+ST.el.map(function(s){return s.toLowerCase();}).join(", "));
+  if(ST.vs&&VSP[ST.vs])parts.push(VSP[ST.vs]);
+  if(ST.ca&&CAP[ST.ca])parts.push(CAP[ST.ca]);
+  if(ST.ti!="No Preference")parts.push(ST.ti.toLowerCase()+" with "+ST.li.toLowerCase()+" quality lighting");
+  if(ST.se!="No Preference")parts.push(ST.se.toLowerCase()+" season");
+  var dm={"Minimal and Clean":"the space is minimal and uncluttered","Styled and Lived-In":"the space feels lived-in and styled with personal touches","Layered and Rich":"the space is rich with layered detail and textures"};
+  if(dm[ST.de])parts.push(dm[ST.de]);
+  parts.push("compose for a "+ST.ra+" aspect ratio");
   parts.push("ultra high resolution, no watermarks, no people");
-  return parts.join(". ") + ".";
+  return parts.join(". ")+".";
 }
 
-const TYPE_LABELS = { "interior-room": "Interior Room", "interior-space": "Interior Space", "exterior-home": "Exterior / Home", "cityscape": "Cityscape", "nature": "Nature" };
+g("copybtn").onclick=function(){
+  var p=buildP();if(!p)return;
+  navigator.clipboard.writeText(p).then(function(){
+    var b=g("copybtn");b.textContent="Copied!";b.className="done";
+    setTimeout(function(){b.textContent="Copy Prompt";b.className="rdy";},2000);
+  }).catch(function(){
+    var b=g("copybtn");b.textContent="Long-press to copy";
+    setTimeout(function(){b.textContent="Copy Prompt";},3000);
+  });
+};
 
-function RadioCard({ label, desc, selected, onClick }) {
-  return (
-    <button onClick={onClick} style={{ background: selected ? "rgba(255,196,87,0.09)" : "rgba(255,255,255,0.025)", border: selected ? "1px solid rgba(255,196,87,0.6)" : "1px solid rgba(255,255,255,0.07)", borderRadius: "7px", padding: desc ? "10px 12px" : "8px 12px", cursor: "pointer", textAlign: "left", width: "100%" }}>
-      <div style={{ color: selected ? "#FFC457" : "#D0C8BC", fontFamily: "DM Sans, sans-serif", fontSize: "12.5px", fontWeight: selected ? 600 : 400 }}>{label}</div>
-      {desc && <div style={{ color: "rgba(232,224,208,0.35)", fontFamily: "DM Sans, sans-serif", fontSize: "10.5px", marginTop: "3px", lineHeight: "1.4" }}>{desc}</div>}
-    </button>
-  );
-}
-
-function ToggleChip({ label, selected, onClick }) {
-  return (
-    <button onClick={onClick} style={{ background: selected ? "rgba(255,196,87,0.11)" : "rgba(255,255,255,0.03)", border: selected ? "1px solid rgba(255,196,87,0.55)" : "1px solid rgba(255,255,255,0.08)", borderRadius: "18px", padding: "5px 11px", cursor: "pointer", color: selected ? "#FFC457" : "rgba(232,224,208,0.55)", fontFamily: "DM Sans, sans-serif", fontSize: "11.5px", fontWeight: selected ? 600 : 400, whiteSpace: "nowrap" }}>{label}</button>
-  );
-}
-
-function ColorSwatch({ palette, selected, onClick }) {
-  return (
-    <button onClick={onClick} style={{ background: selected ? "rgba(255,196,87,0.07)" : "rgba(255,255,255,0.02)", border: selected ? "1px solid rgba(255,196,87,0.55)" : "1px solid rgba(255,255,255,0.07)", borderRadius: "7px", padding: "8px 10px", cursor: "pointer", textAlign: "left", display: "flex", alignItems: "center", gap: "8px", width: "100%" }}>
-      <div style={{ width: "14px", height: "14px", borderRadius: "50%", background: palette.swatch, flexShrink: 0, border: "1px solid rgba(255,255,255,0.12)" }} />
-      <div>
-        <div style={{ color: selected ? "#FFC457" : "#D0C8BC", fontFamily: "DM Sans, sans-serif", fontSize: "12px", fontWeight: selected ? 600 : 400 }}>{palette.label}</div>
-        <div style={{ color: "rgba(232,224,208,0.3)", fontFamily: "DM Sans, sans-serif", fontSize: "10px" }}>{palette.desc}</div>
-      </div>
-    </button>
-  );
-}
-
-function ListPicker({ items, value, onChange }) {
-  return (
-    <div>
-      {items.map((item) => (
-        <button key={item.id} onClick={() => onChange(item.id)} style={{ background: "none", border: "none", borderLeft: value === item.id ? "2px solid #FFC457" : "2px solid transparent", cursor: "pointer", textAlign: "left", padding: "5px 8px", display: "block", width: "100%", color: value === item.id ? "#FFC457" : "rgba(232,224,208,0.52)", fontFamily: "DM Sans, sans-serif", fontSize: "12.5px", fontWeight: value === item.id ? 600 : 400 }}>
-          {item.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function SectionTitle({ step, title, subtitle }) {
-  return (
-    <div style={{ marginBottom: "13px" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "9px" }}>
-        <span style={{ background: "rgba(255,196,87,0.14)", border: "1px solid rgba(255,196,87,0.38)", color: "#FFC457", borderRadius: "50%", width: "21px", height: "21px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "10px", fontWeight: 700, fontFamily: "DM Mono, monospace", flexShrink: 0 }}>{step}</span>
-        <span style={{ color: "#E8E0D0", fontFamily: "DM Sans, sans-serif", fontSize: "13.5px", fontWeight: 600 }}>{title}</span>
-      </div>
-      {subtitle && <div style={{ color: "rgba(232,224,208,0.36)", fontFamily: "DM Sans, sans-serif", fontSize: "11px", marginTop: "3px", marginLeft: "30px" }}>{subtitle}</div>}
-    </div>
-  );
-}
-
-function App() {
-  const [state, setState] = useState({ scene: null, designStyle: null, colorPalette: null, elements: [], style: "photorealistic", camera: "real-estate-wide", ratio: "16:9", time: "golden-hour", lighting: "warm-cozy", detail: "styled-lived", season: "none" });
-  const [copied, setCopied] = useState(false);
-  const [expandedGroups, setExpandedGroups] = useState({ "Interior \u2014 Rooms": true });
-
-  const set = (k, v) => setState((s) => ({ ...s, [k]: v }));
-  const toggle = (k, id) => setState((s) => ({ ...s, [k]: s[k].includes(id) ? s[k].filter((x) => x !== id) : [...s[k], id] }));
-  const selectScene = (id) => setState((s) => ({ ...s, scene: id, designStyle: null, colorPalette: null, elements: [] }));
-  const toggleGroup = (g) => setExpandedGroups((p) => ({ ...p, [g]: !p[g] }));
-
-  const prompt = buildPrompt(state);
-  const sceneType = state.scene ? getSceneType(state.scene) : null;
-  const designStyles = sceneType ? (DESIGN_STYLES[sceneType] || []) : [];
-  const sceneElements = sceneType ? (SCENE_ELEMENTS[sceneType] || []) : [];
-
-  const handleCopy = useCallback(() => {
-    if (!prompt) return;
-    navigator.clipboard.writeText(prompt).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
-  }, [prompt]);
-
-  const divider = <div style={{ height: "1px", background: "rgba(255,255,255,0.05)", margin: "22px 0" }} />;
-
-  return (
-    <div style={{ minHeight: "100vh", width: "100%", background: "#0F0E0C", fontFamily: "DM Sans, sans-serif", color: "#E8E0D0" }}>
-      <header style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "14px 22px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(15,14,12,0.95)", position: "sticky", top: 0, zIndex: 100 }}>
-        <div>
-          <div style={{ fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: 600, color: "#FFC457" }}>SceneForge</div>
-          <div style={{ fontSize: "9.5px", color: "rgba(232,224,208,0.3)", letterSpacing: "0.09em", textTransform: "uppercase", marginTop: "2px" }}>DALL-E Prompt Builder for ChatGPT</div>
-        </div>
-        <div className="sf-badge" style={{ fontSize: "10.5px", color: "rgba(232,224,208,0.26)", fontFamily: "DM Mono, monospace", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: "5px", padding: "5px 10px" }}>Environments - No People</div>
-      </header>
-
-      <div className="sf-layout">
-        <aside className="sf-sidebar">
-          <div style={{ color: "rgba(232,224,208,0.3)", fontSize: "9.5px", fontFamily: "DM Mono, monospace", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "10px" }}>01 - Scene</div>
-          {SCENE_CATEGORIES.map((cat) => (
-            <div key={cat.group}>
-              <button onClick={() => toggleGroup(cat.group)} style={{ width: "100%", textAlign: "left", background: "none", border: "none", cursor: "pointer", padding: "6px 4px", display: "flex", alignItems: "center", justifyContent: "space-between", color: "rgba(232,224,208,0.38)", fontSize: "9px", fontFamily: "DM Mono, monospace", letterSpacing: "0.09em", textTransform: "uppercase" }}>
-                <span>{cat.group}</span>
-                <span style={{ opacity: 0.45, fontSize: "12px" }}>{expandedGroups[cat.group] ? "-" : "+"}</span>
-              </button>
-              {expandedGroups[cat.group] && (
-                <div style={{ marginBottom: "5px" }}>
-                  {cat.scenes.map((scene) => (
-                    <button key={scene.id} onClick={() => selectScene(scene.id)} style={{ background: state.scene === scene.id ? "rgba(255,196,87,0.08)" : "transparent", border: "none", borderLeft: state.scene === scene.id ? "2px solid #FFC457" : "2px solid transparent", cursor: "pointer", textAlign: "left", padding: "6px 9px", display: "block", width: "100%", borderRadius: "0 5px 5px 0", color: state.scene === scene.id ? "#FFC457" : "rgba(232,224,208,0.58)", fontFamily: "DM Sans, sans-serif", fontSize: "12.5px", fontWeight: state.scene === scene.id ? 500 : 400 }}>
-                      {scene.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </aside>
-
-        <main className="sf-main">
-          <div style={{ maxWidth: "820px" }}>
-
-            {!state.scene ? (
-              <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "9px", padding: "28px", textAlign: "center", marginBottom: "24px" }}>
-                <div style={{ color: "rgba(232,224,208,0.18)", fontSize: "12.5px", fontStyle: "italic" }}>Choose a scene from the left to unlock descriptors</div>
-              </div>
-            ) : (
-              <div style={{ background: "rgba(255,196,87,0.025)", border: "1px solid rgba(255,196,87,0.11)", borderRadius: "9px", padding: "20px", marginBottom: "24px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "18px" }}>
-                  <div style={{ width: "3px", height: "16px", background: "#FFC457", borderRadius: "2px" }} />
-                  <div style={{ color: "#FFC457", fontFamily: "DM Sans, sans-serif", fontSize: "13px", fontWeight: 600 }}>{getSceneLabel(state.scene)}</div>
-                  <div style={{ color: "rgba(255,196,87,0.4)", fontFamily: "DM Mono, monospace", fontSize: "9.5px", letterSpacing: "0.08em", textTransform: "uppercase" }}>- {TYPE_LABELS[sceneType]}</div>
-                </div>
-                <div style={{ marginBottom: "18px" }}>
-                  <div style={{ color: "rgba(232,224,208,0.35)", fontSize: "9.5px", fontFamily: "DM Mono, monospace", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "8px" }}>Design Style / Era</div>
-                  <div className="g2">{designStyles.map((ds) => <RadioCard key={ds.id} label={ds.label} desc={ds.desc} selected={state.designStyle === ds.id} onClick={() => set("designStyle", state.designStyle === ds.id ? null : ds.id)} />)}</div>
-                </div>
-                <div style={{ marginBottom: "18px" }}>
-                  <div style={{ color: "rgba(232,224,208,0.35)", fontSize: "9.5px", fontFamily: "DM Mono, monospace", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "8px" }}>Color Palette</div>
-                  <div className="g-colors">{COLOR_PALETTES.map((cp) => <ColorSwatch key={cp.id} palette={cp} selected={state.colorPalette === cp.id} onClick={() => set("colorPalette", state.colorPalette === cp.id ? null : cp.id)} />)}</div>
-                </div>
-                <div>
-                  <div style={{ color: "rgba(232,224,208,0.35)", fontSize: "9.5px", fontFamily: "DM Mono, monospace", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "8px" }}>Scene Elements (multi-select)</div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>{sceneElements.map((el) => <ToggleChip key={el.id} label={el.label} selected={state.elements.includes(el.id)} onClick={() => toggle("elements", el.id)} />)}</div>
-                </div>
-              </div>
-            )}
-
-            {divider}
-
-            <div style={{ marginBottom: "24px" }}>
-              <SectionTitle step="2" title="Visual Style" subtitle="How the image looks and feels" />
-              <div className="g2">{STYLES.map((s) => <RadioCard key={s.id} label={s.label} desc={s.desc} selected={state.style === s.id} onClick={() => set("style", s.id)} />)}</div>
-            </div>
-
-            <div style={{ marginBottom: "24px" }}>
-              <SectionTitle step="3" title="Camera Perspective" subtitle="How the shot is framed" />
-              <div className="g2">{CAMERAS.map((c) => <RadioCard key={c.id} label={c.label} desc={c.desc} selected={state.camera === c.id} onClick={() => set("camera", c.id)} />)}</div>
-            </div>
-
-            <div style={{ marginBottom: "24px" }}>
-              <SectionTitle step="4" title="Aspect Ratio" />
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                {ASPECT_RATIOS.map((r) => (
-                  <button key={r.id} onClick={() => set("ratio", r.id)} style={{ background: state.ratio === r.id ? "rgba(255,196,87,0.1)" : "rgba(255,255,255,0.03)", border: state.ratio === r.id ? "1px solid rgba(255,196,87,0.65)" : "1px solid rgba(255,255,255,0.08)", borderRadius: "7px", padding: "8px 15px", cursor: "pointer" }}>
-                    <div style={{ color: state.ratio === r.id ? "#FFC457" : "#D0C8BC", fontFamily: "DM Mono, monospace", fontSize: "13px", fontWeight: 600 }}>{r.label}</div>
-                    <div style={{ color: "rgba(232,224,208,0.35)", fontFamily: "DM Sans, sans-serif", fontSize: "10px", marginTop: "2px" }}>{r.desc}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ marginBottom: "24px" }}>
-              <SectionTitle step="5" title="Atmosphere & Detail" subtitle="Mood, time, light and density" />
-              <div className="g-atm">
-                <div>
-                  <div style={{ color: "rgba(232,224,208,0.35)", fontSize: "9px", fontFamily: "DM Mono, monospace", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "6px" }}>Time of Day</div>
-                  <ListPicker items={TIME_OF_DAY} value={state.time} onChange={(v) => set("time", v)} />
-                </div>
-                <div>
-                  <div style={{ color: "rgba(232,224,208,0.35)", fontSize: "9px", fontFamily: "DM Mono, monospace", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "6px" }}>Lighting Mood</div>
-                  <ListPicker items={LIGHTING} value={state.lighting} onChange={(v) => set("lighting", v)} />
-                </div>
-                <div>
-                  <div style={{ color: "rgba(232,224,208,0.35)", fontSize: "9px", fontFamily: "DM Mono, monospace", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "6px" }}>Detail Level</div>
-                  {DETAIL_LEVEL.map((d) => (
-                    <button key={d.id} onClick={() => set("detail", d.id)} style={{ background: state.detail === d.id ? "rgba(255,196,87,0.07)" : "none", border: "none", borderLeft: state.detail === d.id ? "2px solid #FFC457" : "2px solid transparent", cursor: "pointer", textAlign: "left", padding: "5px 8px", display: "block", width: "100%", borderRadius: "0 4px 4px 0", marginBottom: "3px" }}>
-                      <div style={{ color: state.detail === d.id ? "#FFC457" : "rgba(232,224,208,0.55)", fontFamily: "DM Sans, sans-serif", fontSize: "12px", fontWeight: state.detail === d.id ? 600 : 400 }}>{d.label}</div>
-                      <div style={{ color: "rgba(232,224,208,0.25)", fontFamily: "DM Sans, sans-serif", fontSize: "10px", marginTop: "1px" }}>{d.desc}</div>
-                    </button>
-                  ))}
-                </div>
-                <div>
-                  <div style={{ color: "rgba(232,224,208,0.35)", fontSize: "9px", fontFamily: "DM Mono, monospace", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "6px" }}>Season</div>
-                  <ListPicker items={SEASON} value={state.season} onChange={(v) => set("season", v)} />
-                </div>
-              </div>
-            </div>
-
-            {divider}
-
-            <div style={{ background: state.scene ? "rgba(255,196,87,0.035)" : "rgba(255,255,255,0.015)", border: state.scene ? "1px solid rgba(255,196,87,0.18)" : "1px solid rgba(255,255,255,0.05)", borderRadius: "9px", padding: "18px", marginBottom: "40px" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "11px" }}>
-                <div>
-                  <div style={{ color: "#E8E0D0", fontFamily: "DM Sans, sans-serif", fontSize: "13px", fontWeight: 600 }}>Generated Prompt</div>
-                  <div style={{ color: "rgba(232,224,208,0.28)", fontSize: "10.5px", marginTop: "2px" }}>Paste directly into ChatGPT</div>
-                </div>
-                <button onClick={handleCopy} disabled={!prompt} style={{ background: prompt ? (copied ? "rgba(100,200,100,0.12)" : "rgba(255,196,87,0.12)") : "rgba(255,255,255,0.03)", border: prompt ? (copied ? "1px solid rgba(100,200,100,0.42)" : "1px solid rgba(255,196,87,0.42)") : "1px solid rgba(255,255,255,0.06)", borderRadius: "6px", padding: "7px 15px", cursor: prompt ? "pointer" : "default", color: prompt ? (copied ? "#88E8A0" : "#FFC457") : "rgba(232,224,208,0.16)", fontFamily: "DM Sans, sans-serif", fontSize: "12px", fontWeight: 600 }}>
-                  {copied ? "Copied!" : "Copy Prompt"}
-                </button>
-              </div>
-              {prompt ? (
-                <div style={{ color: "rgba(232,224,208,0.72)", fontFamily: "DM Mono, monospace", fontSize: "11.5px", lineHeight: "1.75", background: "rgba(0,0,0,0.26)", borderRadius: "6px", padding: "13px", border: "1px solid rgba(255,255,255,0.04)", whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{prompt}</div>
-              ) : (
-                <div style={{ color: "rgba(232,224,208,0.16)", fontFamily: "DM Sans, sans-serif", fontSize: "12px", fontStyle: "italic", textAlign: "center", padding: "22px 0" }}>Select a scene to generate your prompt</div>
-              )}
-            </div>
-
-          </div>
-        </main>
-      </div>
-    </div>
-  );
-}
-
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-```
-
-  </script>
+render();
+</script>
 </body>
 </html>
